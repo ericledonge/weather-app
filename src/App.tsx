@@ -1,35 +1,36 @@
 import './App.css';
 
 import React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
-import Day from './components/Day';
-import useWeatherData from './hooks/useWeatherData';
+import WeatherBoardReactQuery from './components/WeatherBoardReactQuery';
+import WeatherBoardVanillaReact from './components/WeatherBoardVanillaReact';
 
 const POSTAL_CODE = 'G6V9N3';
 const NUMBER_OF_DAYS_TO_FORECAST = 3;
 
 const App: React.FC = () => {
-  const { isLoading, forecastDays } = useWeatherData(
-    POSTAL_CODE,
-    NUMBER_OF_DAYS_TO_FORECAST,
-  );
+  // Create a client
+  const queryClient = new QueryClient();
 
   return (
-    <div className="wrapper">
-      {isLoading ? (
-        <p>loading...</p>
-      ) : (
-        forecastDays?.map((day, index) => (
-          <Day
-            key={index}
-            day={day.day}
-            date={day.date}
-            weather={day.weather}
-            temperature={day.temperature}
-          />
-        ))
-      )}
-    </div>
+    // Provide the client to your App
+    <QueryClientProvider client={queryClient}>
+      <WeatherBoardReactQuery
+        postalCode={POSTAL_CODE}
+        numberOfDaysToForecast={NUMBER_OF_DAYS_TO_FORECAST}
+      />
+
+      <div className="separator" />
+
+      <WeatherBoardVanillaReact
+        postalCode={POSTAL_CODE}
+        numberOfDaysToForecast={NUMBER_OF_DAYS_TO_FORECAST}
+      />
+
+      <ReactQueryDevtools initialIsOpen />
+    </QueryClientProvider>
   );
 };
 

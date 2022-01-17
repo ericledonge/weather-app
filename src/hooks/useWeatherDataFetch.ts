@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import getWeatherData from '../services/getWeatherData';
 import { mapWeatherData } from '../utils/utils';
 
 type forecastDay = {
@@ -11,26 +12,27 @@ type forecastDay = {
 
 type useWeatherDataObject = {
   isLoading: boolean;
+  isError: boolean;
   forecastDays: forecastDay[];
 };
 
-const useWeatherData = (
+const useWeatherDataFetch = (
   postalCode: string,
   numberOfDaysToForecast: number,
 ): useWeatherDataObject => {
-  const WEATHER_API_URL = `https://api.weatherapi.com/v1/forecast.json?key=f2ca8da356204ad9ab520209221001&q=${postalCode}&days=${numberOfDaysToForecast}&aqi=no&alerts=no`;
-
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [forecastDays, setForecastDays] = useState<forecastDay[]>([]);
 
   useEffect(() => {
     (async function () {
       try {
         setIsLoading(true);
-        const response = await fetch(WEATHER_API_URL, { mode: 'cors' });
-        const result = await response.json();
-        const data = mapWeatherData(result);
-        setForecastDays(data);
+        const weatherData = await getWeatherData(postalCode, numberOfDaysToForecast);
+        const mappedWeatherData = mapWeatherData(weatherData);
+        setForecastDays(mappedWeatherData);
+      } catch (error) {
+        setIsError(error);
       } finally {
         setIsLoading(false);
       }
@@ -39,8 +41,9 @@ const useWeatherData = (
 
   return {
     isLoading,
+    isError,
     forecastDays,
   };
 };
 
-export default useWeatherData;
+export default useWeatherDataFetch;

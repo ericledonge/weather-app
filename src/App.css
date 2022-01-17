@@ -4,6 +4,10 @@
   gap: 1em;
 }
 
+.separator {
+  padding-top: 2rem;
+}
+
 .day {
   font-family: 'Krona One', sans-serif;
   color: #4db0d3;

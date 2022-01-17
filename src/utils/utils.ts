@@ -1,22 +1,9 @@
 import { DayProps } from '../components/Day';
+import { forecastDay } from '../models/weather';
+import { WeatherData } from '../services/getWeatherData';
 
-type weatherData = {
-  forecast: forecast;
-};
-
-type forecast = {
-  forecastday: forecastday[];
-};
-
-type forecastday = {
-  day: { condition: { text: string }; avgtemp_c: number };
-  date: string;
-  weather: string;
-  temperature: number;
-};
-
-export const mapWeatherData = (weatherData: weatherData): Array<DayProps> =>
-  weatherData?.forecast?.forecastday.map((forecastDay: forecastday) => ({
+export const mapWeatherData = (weatherData: WeatherData): Array<DayProps> =>
+  weatherData?.forecast?.forecastday.map((forecastDay: forecastDay) => ({
     day: getDay(forecastDay.date),
     date: getDate(forecastDay.date),
     weather: getWeather(forecastDay.day.condition.text),
